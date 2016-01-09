@@ -11,12 +11,12 @@ describe Resque::Delayed do
     end
 
     it "should allow queueing at a specified time" do
-      Resque::Delayed.create_at(Time.now + 1.day, SomeJob, 'foo', 'bar', 1234)
+      Resque::Delayed.create_at(Time.now + 1.day, nil, SomeJob, 'foo', 'bar', 1234)
       Resque::Delayed.count.should == 1
     end
 
     it "should allow queuing after a specified delay" do
-      Resque::Delayed.create_in(1.day, SomeJob, 'foo', 'bar', 1234)
+      Resque::Delayed.create_in(1.day, nil, SomeJob, 'foo', 'bar', 1234)
       Resque::Delayed.count.should == 1
     end
   end
@@ -25,7 +25,7 @@ describe Resque::Delayed do
     before :each do
       Resque::Delayed.clear
       @one_day_from_now = Time.now + 1.day
-      Resque::Delayed.create_at(@one_day_from_now, SomeJob, 'foo', 'bar', 1234)
+      Resque::Delayed.create_at(@one_day_from_now, nil, SomeJob, 'foo', 'bar', 1234)
     end
 
     it "should not make items available before create time" do
@@ -46,7 +46,7 @@ describe Resque::Delayed do
     before do
       Resque::Delayed.clear
       @one_hour_ago = Time.now - 1.hour
-      Resque::Delayed.create_at(@one_hour_ago, SomeJob, 'foo', 'bar', 1234)
+      Resque::Delayed.create_at(@one_hour_ago, nil, SomeJob, 'foo', 'bar', 1234)
     end
 
     it "should deserialize properly" do
@@ -60,9 +60,9 @@ describe Resque::Delayed do
     before :each do
       Resque::Delayed.clear
       @one_hour_ago = Time.now - 1.hour
-      Resque::Delayed.create_at(@one_hour_ago, SomeJob, 'first')
-      Resque::Delayed.create_at(@one_hour_ago + 2.minutes, SomeJob, 'third')
-      Resque::Delayed.create_at(@one_hour_ago + 1.minute, SomeJob, 'second')
+      Resque::Delayed.create_at(@one_hour_ago, nil, SomeJob, 'first')
+      Resque::Delayed.create_at(@one_hour_ago + 2.minutes, nil, SomeJob, 'third')
+      Resque::Delayed.create_at(@one_hour_ago + 1.minute, nil, SomeJob, 'second')
     end
 
     it "should be setup properly" do
@@ -77,12 +77,12 @@ describe Resque::Delayed do
     end
 
     it "should allow queueing multiple instances of the same job" do
-      Resque::Delayed.create_at(@one_hour_ago + 3.minutes, SomeJob, 'first')
+      Resque::Delayed.create_at(@one_hour_ago + 3.minutes, nil, SomeJob, 'first')
       Resque::Delayed.count.should == 4
     end
 
     it "should not alter position of existing jobs on second instance queue" do
-      Resque::Delayed.create_at(@one_hour_ago + 3.minutes, SomeJob, 'first')
+      Resque::Delayed.create_at(@one_hour_ago + 3.minutes, nil, SomeJob, 'first')
       Resque::Delayed.peek.should == ["jobs", "SomeJob", "first"]
     end
   end

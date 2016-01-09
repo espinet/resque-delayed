@@ -12,13 +12,13 @@ describe Resque::Delayed::Worker do
     end
 
     it "should not harvest future jobs" do
-      Resque.enqueue_in(1.hour, SomeJob, 'future')
+      Resque.enqueue_in(1.hour, nil, SomeJob, 'future')
       @worker.work(0)
       Resque::Delayed.count.should == 1
     end
 
     it "should harvest past jobs" do
-      Resque.enqueue_at(Time.now - 1.hour, SomeJob, 'past')
+      Resque.enqueue_at(Time.now - 1.hour, nil, SomeJob, 'past')
       @worker.work(0)
       Resque::Delayed.count.should == 0
     end
@@ -28,8 +28,8 @@ describe Resque::Delayed::Worker do
     before do
       Resque::Delayed.clear
       @worker = Resque::Delayed::Worker.new
-      Resque.enqueue_at(Time.now - 1.hour, SomeJob, 'past')
-      Resque.enqueue_at(Time.now - 1.hour, SomeOtherJob, 'past')
+      Resque.enqueue_at(Time.now - 1.hour, nil, SomeJob, 'past')
+      Resque.enqueue_at(Time.now - 1.hour, nil, SomeOtherJob, 'past')
     end
 
     after do

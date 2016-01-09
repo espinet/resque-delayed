@@ -15,17 +15,17 @@ module Resque
         Resque.redis.zcard @queue
       end
 
-      def create_at(time, *args)
+      def create_at(time, dynamic_queue, *args)
         klass, *args = args
-        queue = Resque.queue_from_class klass
+        queue = dynamic_queue || Resque.queue_from_class(klass)
         # validate here so that the Resque::Delayed worker doesn't have
         # to worry about it before enqueueing
         Resque.validate(klass, queue)
         Resque.redis.zadd @queue, time.to_i, encode(queue, klass, *args)
       end
 
-      def create_in(offset, *args)
-        create_at Time.now + offset, *args
+      def create_in(offset, dynamic_queue, *args)
+        create_at Time.now + offset, dynamic_queue, *args
       end
 
       def encode(queue, klass, *args)
